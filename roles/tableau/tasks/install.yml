@@ -13,7 +13,7 @@
   when: ansible_os_family == 'RedHat'
 
 - name: TABLEAU INSTALL | Get Tableau TSM version
-  shell: "ls {{ tsm_packages }} | grep scripts"
+  shell: "ls {{ tsm_packages }} | grep scripts | tail -1"
   register: tsm
   changed_when: false
 
