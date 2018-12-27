@@ -1,5 +1,4 @@
----
-
+---  
 - name: TABLEAU | Ensure if sudoers is configured correctly
   lineinfile:
     path: /etc/sudoers
