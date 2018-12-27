@@ -100,13 +100,17 @@
   set_fact:
     current_server_port: "{{ server_port.stdout }}"
 
+- debug:
+    msg: "{{ current_server_port }}"    
+
 - name: "TABLEAU CONFIG | Configure Tableau Server gateway port on node0 to {{ tableau_port }}"
   command: "{{ TSM_EXECUTABLE }}/tsm topology set-ports --node-name node0 --username {{ tableau_user }} --password {{ tableau_password }} --port-name gateway --port-value {{ tableau_port }} --ignore-prompt"
-  when: tableau_port != current_server_port
-    
+  when: tableau_port|string != current_server_port
+
+
 - name: "TABLEAU CONFIG | Configure Tableau Server gateway port on node1 to {{ tableau_port }}"
   command: "{{ TSM_EXECUTABLE }}/tsm topology set-ports --node-name node1 --username {{ tableau_user }} --password {{ tableau_password }} --port-name gateway --port-value {{ tableau_port }} --ignore-prompt"
-  when: tableau_port != current_server_port
+  when: tableau_port|string != current_server_port
 
 - name: TABLEAU CONFIG | Configure Tableau Server administrator user
   command: '{{ TSM_EXECUTABLE }}/tabcmd initialuser --server "localhost:{{ tableau_port }}" --username "{{ tabcmd_admin_username }}" --password "{{ tabcmd_admin_password }}"'
