@@ -96,21 +96,27 @@
   register: server_port
   changed_when: false
 
+- name: TABLEAU CONFIG | Set facts for Tableau Server Manager current port
+  set_fact:
+    current_server_port: "{{ server_port.stdout }}"
+
+- name: "TABLEAU CONFIG | Configure Tableau Server gateway port on node0 to {{ tableau_port }}"
+  command: "{{ TSM_EXECUTABLE }}/tsm topology set-ports --node-name node0 --username {{ tableau_user }} --password {{ tableau_password }} --port-name gateway --port-value {{ tableau_port }} --ignore-prompt"
+  when: tabcmd_admin_username != current_server_port
+    
+- name: "TABLEAU CONFIG | Configure Tableau Server gateway port on node1 to {{ tableau_port }}"
+  command: "{{ TSM_EXECUTABLE }}/tsm topology set-ports --node-name node1 --username {{ tableau_user }} --password {{ tableau_password }} --port-name gateway --port-value {{ tableau_port }} --ignore-prompt"
+  when: tabcmd_admin_username != current_server_port
+
 - name: TABLEAU CONFIG | Configure Tableau Server administrator user
-  command: '{{ TSM_EXECUTABLE }}/tabcmd initialuser --server "localhost:{{ server_port.stdout }}" --username "{{ tabcmd_admin_username }}" --password "{{ tabcmd_admin_password }}"'
+  command: '{{ TSM_EXECUTABLE }}/tabcmd initialuser --server "localhost:{{ tableau_port }}" --username "{{ tabcmd_admin_username }}" --password "{{ tabcmd_admin_password }}"'
   register: tableau_initial_user_cmd
   failed_when:
     - tableau_initial_user_cmd.rc != 0
     - not "The server is already initialized" in tableau_initial_user_cmd.stderr
   changed_when: tableau_initial_user_cmd.rc == 0
 
-- name: "TABLEAU CONFIG | Configure Tableau Server gateway port on node0 to {{ tableau_port }}"
-  command: "{{ TSM_EXECUTABLE }}/tsm topology set-ports --node-name node0 --username {{ tableau_user }} --password {{ tableau_password }} --port-name gateway --port-value {{ tableau_port }} --ignore-prompt"
-  when: tabcmd_admin_username != server_port.stdout
-    
-- name: "TABLEAU CONFIG | Configure Tableau Server gateway port on node1 to {{ tableau_port }}"
-  command: "{{ TSM_EXECUTABLE }}/tsm topology set-ports --node-name node1 --username {{ tableau_user }} --password {{ tableau_password }} --port-name gateway --port-value {{ tableau_port }} --ignore-prompt"
-  when: tabcmd_admin_username != server_port.stdout
+
 
 
 
