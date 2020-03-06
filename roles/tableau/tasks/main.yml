@@ -1,9 +1,10 @@
----  
+---
 - name: TABLEAU | Ensure if sudoers is configured correctly
   lineinfile:
     path: /etc/sudoers
     state: present
     line: "#includedir /etc/sudoers.d"
+  tags: all_nodes
 
 - name: TABLEAU | Install Tableau Server
   import_tasks: install.yml
@@ -11,19 +12,19 @@
 
 - name: TABLEAU | Manage Tableau Server Admin account
   import_tasks: user.yml
-  tags: tableau-user
+  tags: [tableau-user, all_nodes]
 
 - name: TABLEAU | Configure Tableau Server
   import_tasks: config.yml
   become: true
   become_user: "{{ tableau_user }}"
-  tags: tableau-config
+  tags: [tableau-config, main_node]
 
 - name: TABLEAU | Install Postgresql Tableau ODBC
   import_tasks: postgresql.yml
-  tags: tableau-odbc
+  tags: [tableau-odbc, all_nodes]
 
 - name: TABLEAU | Create ssl reload helper
   import_tasks: ssl.yml
-  tags: tableau-ssl
+  tags: [tableau-ssl, all_nodes]
   when: tableau_setup_ssl_helper
