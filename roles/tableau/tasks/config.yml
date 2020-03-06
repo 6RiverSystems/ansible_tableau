@@ -95,10 +95,6 @@
   shell: "netstat -tnp | grep httpd | awk '{print $4}' | tail -1 | awk -F: '{print $2}'"
   register: server_port
 
-- name: "TABLEAU CONFIG | Configure Tableau Server gateway port on node0 to {{ tableau_port }}"
-  command: "{{ TSM_EXECUTABLE }}/tsm topology set-ports --node-name node0 --username {{ tableau_user }} --password {{ tableau_password }} --port-name gateway --port-value {{ tableau_port }} --ignore-prompt"
-  when: tableau_port|string != server_port.stdout
-
 - name: "TABLEAU CONFIG | Configure Tableau Server gateway port on node1 to {{ tableau_port }}"
   command: "{{ TSM_EXECUTABLE }}/tsm topology set-ports --node-name node1 --username {{ tableau_user }} --password {{ tableau_password }} --port-name gateway --port-value {{ tableau_port }} --ignore-prompt"
   when: tableau_port|string != server_port.stdout

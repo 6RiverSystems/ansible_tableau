@@ -5,17 +5,20 @@
     deb: "{{ tableau_url_deb }}"
     state: present
   when: ansible_os_family == 'Debian'
+  tags: all_nodes
 
 - name: TABLEAU INSTALL | Install on RedHat environment (This may take some time)
   yum:
     name: "{{ tableau_url_rpm }}"
     state: present
   when: ansible_os_family == 'RedHat'
+  tags: all_nodes
 
 - name: TABLEAU INSTALL | Get Tableau TSM version
   shell: "ls {{ tsm_packages }} | grep scripts | tail -1"
   register: tsm
   changed_when: false
+  tags: all_nodes
 
 - name: TABLEAU INSTALL | Fix systemd unit
   lineinfile:
@@ -24,9 +27,18 @@
     insertbefore: "^ExecStart="
     state: present
   when: tableau_fix_systemd_unit
+  tags: all_nodes
 
-- name: TABLEAU INSTALL | Initialize Tableau TSM
+- name: TABLEAU INSTALL | Initialize Tableau TSM Main Node
   command: ./initialize-tsm {{ tsm_execute_args }} -f
   args:
     chdir: "{{ tsm_packages }}/{{ tsm.stdout }}"
     creates: "{{ tableau_data_dir }}"
+  tags: main_node
+
+- name: TABLEAU INSTALL | Initialize Tableau TSM Additional Node
+  command: "./initialize-tsm {{ tsm_execute_args }} -f -b {{ tsm_bootstrap_filename }} -u {{ tableau_user }} -p {{ tableau_password }}"
+  args:
+    chdir: "{{ tsm_packages }}/{{ tsm.stdout }}"
+    creates: "{{ tableau_data_dir }}"
+  tags: additional_node
