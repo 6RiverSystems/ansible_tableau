@@ -7,7 +7,6 @@
     owner: tableau
     group: tableau
     mode: 0660
-  notify: enable tsm maintenance service
 
 - name: TABLEAU MAINTENANCE | TSM maintenance cleanup timer
   template:
@@ -16,7 +15,6 @@
     owner: tableau
     group: tableau
     mode: 0660
-  notify: start tsm maintenance timer
 
 - name: TABLEAU MAINTENANCE | Enable tsm maintenance service
   become: yes
