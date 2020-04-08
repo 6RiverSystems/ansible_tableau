@@ -33,4 +33,4 @@
   import_tasks: maintenance.yml
   become: true
   become_user: tableau
-  tags: [tableau-maintenance, all_nodes]
+  tags: [tableau-maintenance, main_node]
