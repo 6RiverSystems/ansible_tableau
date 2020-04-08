@@ -29,7 +29,9 @@
 
 - name: TABLEAU CONFIG | Get free trial Tableau Server licence
   command: "{{ TSM_EXECUTABLE }}/tsm licenses activate -t --username {{ tableau_user }} --password {{ tableau_password }}"
-  when: tsm_licence == ""
+  when:
+    - tsm_licence == ""
+    - not tableau_list_licenses.stdout_lines | length > 1
   register: tableau_set_free_licence_status
 
 - name: TABLEAU CONFIG | Copy Tableau Server registration file

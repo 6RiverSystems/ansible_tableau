@@ -1,0 +1,39 @@
+---
+
+- name: TABLEAU MAINTENANCE | TSM maintenance cleanup service
+  template:
+    src: .local/share/systemd/user/tsm_maintenance_cleanup.service
+    dest: "{{ tableau_data_dir }}/.local/share/systemd/user/tsm_maintenance_cleanup.service"
+    owner: tableau
+    group: tableau
+    mode: 0660
+  notify: enable tsm maintenance service
+
+- name: TABLEAU MAINTENANCE | TSM maintenance cleanup timer
+  template:
+    src: .local/share/systemd/user/tsm_maintenance_cleanup.timer
+    dest: "{{ tableau_data_dir }}/.local/share/systemd/user/tsm_maintenance_cleanup.timer"
+    owner: tableau
+    group: tableau
+    mode: 0660
+  notify: start tsm maintenance timer
+
+- name: TABLEAU MAINTENANCE | Enable tsm maintenance service
+  become: yes
+  become_user: tableau
+  systemd:
+    daemon_reload: true
+    scope: user
+    name: tsm_maintenance_cleanup.service
+    state: reloaded
+    enabled: true
+
+- name: TABLEAU MAINTENANCE | Start tsm maintenance timer
+  become: yes
+  become_user: tableau
+  systemd:
+    daemon_reload: true
+    scope: user
+    name: tsm_maintenance_cleanup.timer
+    state: restarted
+    enabled: true

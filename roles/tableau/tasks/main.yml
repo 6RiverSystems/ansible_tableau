@@ -28,3 +28,9 @@
   import_tasks: ssl.yml
   tags: [tableau-ssl, all_nodes]
   when: tableau_setup_ssl_helper
+
+- name: TABLEAU | Configure Tableau Maintenance
+  import_tasks: maintenance.yml
+  become: true
+  become_user: tableau
+  tags: [tableau-maintenance, all_nodes]

@@ -1,0 +1,10 @@
+[Unit]
+Description=Tableau Server Cleanup Script
+After=network.target
+Wants=tsm_maintenance_cleanup.timer
+
+[Service]
+ExecStart={{ TSM_EXECUTABLE }}/tsm maintenance cleanup -l -ic -r -t --log-files-retention 7
+
+[Install]
+WantedBy=default.target
