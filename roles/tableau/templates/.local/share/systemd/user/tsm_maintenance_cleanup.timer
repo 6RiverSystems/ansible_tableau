@@ -1,0 +1,10 @@
+[Unit]
+Description=Run tsm_maintenance_cleanup every hour
+Requires=tsm_maintenance_cleanup.service
+
+[Timer]
+Unit=tsm_maintenance_cleanup.service
+OnCalendar=hourly
+
+[Install]
+WantedBy=timers.target
